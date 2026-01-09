@@ -88,29 +88,95 @@ function initializeFilters() {
  */
 function initializePageNavigation() {
     const navLinks = document.querySelectorAll('.nav-link[data-page]');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link[data-page]');
     const pages = document.querySelectorAll('.dashboard-page[data-page]');
 
+    // Mobile menu elements
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+    const mobileNavClose = document.getElementById('mobileNavClose');
+
+    // Function to navigate to a page
+    function navigateToPage(targetPage) {
+        // Update desktop nav links
+        navLinks.forEach(l => l.classList.remove('active'));
+        navLinks.forEach(l => {
+            if (l.dataset.page === targetPage) l.classList.add('active');
+        });
+
+        // Update mobile nav links
+        mobileNavLinks.forEach(l => l.classList.remove('active'));
+        mobileNavLinks.forEach(l => {
+            if (l.dataset.page === targetPage) l.classList.add('active');
+        });
+
+        // Show target page, hide others
+        pages.forEach(page => {
+            if (page.dataset.page === targetPage) {
+                page.classList.add('active');
+            } else {
+                page.classList.remove('active');
+            }
+        });
+
+        // Scroll to top of main content
+        document.querySelector('.dashboard-main').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Desktop nav click handlers
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            const targetPage = e.target.dataset.page;
-
-            // Update active nav link
-            navLinks.forEach(l => l.classList.remove('active'));
-            e.target.classList.add('active');
-
-            // Show target page, hide others
-            pages.forEach(page => {
-                if (page.dataset.page === targetPage) {
-                    page.classList.add('active');
-                } else {
-                    page.classList.remove('active');
-                }
-            });
-
-            // Scroll to top of main content
-            document.querySelector('.dashboard-main').scrollIntoView({ behavior: 'smooth' });
+            navigateToPage(e.target.dataset.page);
         });
     });
+
+    // Mobile nav click handlers
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            navigateToPage(e.target.dataset.page);
+            closeMobileMenu();
+        });
+    });
+
+    // Mobile menu toggle functions
+    function openMobileMenu() {
+        if (mobileNavOverlay) {
+            mobileNavOverlay.style.display = 'flex';
+            setTimeout(() => {
+                mobileNavOverlay.classList.add('active');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeMobileMenu() {
+        if (mobileNavOverlay) {
+            mobileNavOverlay.classList.remove('active');
+            setTimeout(() => {
+                mobileNavOverlay.style.display = 'none';
+            }, 250);
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Mobile menu button click
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+    }
+
+    // Mobile close button click
+    if (mobileNavClose) {
+        mobileNavClose.addEventListener('click', closeMobileMenu);
+    }
+
+    // Close on overlay background click
+    if (mobileNavOverlay) {
+        mobileNavOverlay.addEventListener('click', (e) => {
+            if (e.target === mobileNavOverlay) {
+                closeMobileMenu();
+            }
+        });
+    }
 }
 
 /**

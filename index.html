@@ -22,10 +22,25 @@
 
 <body>
 
-  <!-- Zurich Top Navigation -->
+  <!-- Mobile Navigation Overlay -->
+  <div id="mobileNavOverlay" class="mobile-nav-overlay">
+    <div class="mobile-nav-content">
+      <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+      <nav class="mobile-nav-menu">
+        <button class="mobile-nav-link active" data-page="overview">Overview</button>
+        <button class="mobile-nav-link" data-page="performance">Performance</button>
+        <button class="mobile-nav-link" data-page="initiatives">Initiatives</button>
+        <button class="mobile-nav-link" data-page="governance">Governance</button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Mobile Hamburger Button (Fixed) -->
+  <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+
+  <!-- Zurich Top Navigation (Desktop) -->
   <nav class="zurich-nav">
     <div class="nav-left">
-      <button class="nav-menu-btn">☰ Menu</button>
       <button class="nav-link active" data-page="overview">Overview</button>
       <button class="nav-link" data-page="performance">Performance</button>
       <button class="nav-link" data-page="initiatives">Initiatives</button>
@@ -69,7 +84,7 @@
     <div class="filter-bar">
       <div class="filter-group">
         <label for="tpaFilter">TPA Provider</label>
-        <select id="tpaFilter" class="filter-select" multiple>
+        <select id="tpaFilter" class="filter-select">
           <option value="all" selected>All TPAs</option>
         </select>
       </div>
