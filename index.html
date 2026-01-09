@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TPA Operations Performance Analytics Dashboard - Portfolio Demonstration">
+  <meta name="author" content="William Namayi">
+  <title>TPA Operations Performance Dashboard | Zurich Portfolio</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Zurich Top Navigation -->
+  <nav class="zurich-nav">
+    <div class="nav-left">
+      <button class="nav-menu-btn">☰ Menu</button>
+      <button class="nav-link active" data-page="overview">Overview</button>
+      <button class="nav-link" data-page="performance">Performance</button>
+      <button class="nav-link" data-page="initiatives">Initiatives</button>
+      <button class="nav-link" data-page="governance">Governance</button>
+    </div>
+    <div class="nav-right">
+      <div class="zurich-logo-icon">Z</div>
+      <span class="zurich-logo">ZURICH</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo-section">
+          <div class="logo-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="8" fill="#1A3A6B" />
+              <path d="M8 16L14 10L20 16L26 10" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M8 22L14 16L20 22L26 16" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round" opacity="0.6" />
+            </svg>
+          </div>
+          <div class="logo-text">
+            <h1>TPA Operations Analytics</h1>
+            <p class="subtitle">Performance Monitoring & Governance Dashboard</p>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="date-info">
+          <span class="label">Last Updated</span>
+          <span class="value" id="lastUpdated">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label for="tpaFilter">TPA Provider</label>
+        <select id="tpaFilter" class="filter-select" multiple>
+          <option value="all" selected>All TPAs</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="claimTypeFilter">Claim Type</label>
+        <select id="claimTypeFilter" class="filter-select">
+          <option value="all" selected>All Types</option>
+          <option value="Workers Comp">Workers Comp</option>
+          <option value="General Liability">General Liability</option>
+          <option value="Auto Liability">Auto Liability</option>
+          <option value="Property">Property</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="dateRangeFilter">Time Period</label>
+        <select id="dateRangeFilter" class="filter-select">
+          <option value="30">Last 30 Days</option>
+          <option value="90" selected>Last 90 Days</option>
+          <option value="180">Last 6 Months</option>
+          <option value="365">Last 12 Months</option>
+        </select>
+      </div>
+
+      <button id="resetFilters" class="btn-secondary">Reset Filters</button>
+      <button id="exportData" class="btn-primary">Export Report</button>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Content -->
+  <main class="dashboard-main">
+
+    <!-- PAGE 1: Overview -->
+    <div class="dashboard-page active" data-page="overview">
+
+      <!-- Storytelling Narrative -->
+      <div class="page-narrative">
+        <h2>Here's what's happening across your TPA portfolio</h2>
+        <p class="narrative-intro">"At a glance, your TPA operations are performing well—but there are opportunities to
+          explore."</p>
+        <p class="narrative-context">This overview surfaces the key metrics that matter most: claims volume, closing
+          efficiency, cost savings, and data quality. Below, we highlight both wins and areas that need your attention.
+        </p>
+      </div>
+
+      <section class="dashboard-section" id="executiveOverview">
+        <div class="section-header">
+          <h2>Executive Overview</h2>
+          <p class="section-description">Key performance indicators across all TPA operations</p>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <span class="kpi-label">Total Claims Volume</span>
+              <span class="kpi-value" id="kpiTotalClaims">--</span>
+              <span class="kpi-change positive" id="kpiClaimsChange">--</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <span class="kpi-label">Avg Closing Ratio</span>
+              <span class="kpi-value" id="kpiClosingRatio">--</span>
+              <span class="kpi-change" id="kpiClosingChange">--</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <span class="kpi-label">Initiative Savings (YTD)</span>
+              <span class="kpi-value" id="kpiSavings">--</span>
+              <span class="kpi-change positive" id="kpiSavingsChange">--</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+                <polyline points="9 18 9 22 15 22 15 18"></polyline>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <span class="kpi-label">Data Quality Score</span>
+              <span class="kpi-value" id="kpiDataQuality">--</span>
+              <span class="kpi-change" id="kpiDataQualityChange">--</span>
+            </div>
+          </div>
+
+          <div class="kpi-card alert-card">
+            <div class="kpi-icon" style="background: rgba(214, 69, 53, 0.1);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D64535" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <span class="kpi-label">Claims Pending >90 Days</span>
+              <span class="kpi-value" id="kpiPendingClaims">--</span>
+              <span class="kpi-subtext" id="kpiPendingSubtext">Requires attention</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Insight Callout -->
+        <div class="insight-callout">
+          <div class="insight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <div class="insight-content">
+            <h4>Key Insight</h4>
+            <p>Your claims volume is up, but closing ratios remain stable. This indicates strong TPA capacity
+              management. Explore the <strong>Performance</strong> page to see which TPAs are driving results.</p>
+          </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Claims Volume Trend</h3>
+              <p class="chart-description">Monthly claims by status</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="claimsVolumeChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Portfolio Composition</h3>
+              <p class="chart-description">Claims distribution by type</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="portfolioCompositionChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- PAGE 2: Performance Analytics -->
+    <div class="dashboard-page" data-page="performance">
+
+      <!-- Storytelling Narrative -->
+      <div class="page-narrative">
+        <h2>How are your TPAs performing?</h2>
+        <p class="narrative-intro">"Not all TPAs are created equal—here's how they stack up against each other."</p>
+        <p class="narrative-context">This page compares your TPA providers across key metrics: closing ratios, days to
+          close, reserve accuracy, and litigation rates. Use this to identify top performers and areas for coaching.</p>
+      </div>
+
+      <section class="dashboard-section" id="performanceAnalytics">
+        <div class="section-header">
+          <h2>Performance Analytics</h2>
+          <p class="section-description">TPA performance comparison and detailed metrics</p>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card chart-card-wide">
+            <div class="chart-header">
+              <h3>TPA Performance Comparison</h3>
+              <p class="chart-description">Key metrics by TPA provider</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="tpaComparisonChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Reserve Accuracy Analysis</h3>
+              <p class="chart-description">Reserve estimates vs. actual settlements</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="reserveAccuracyChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Insight Callout -->
+        <div class="insight-callout">
+          <div class="insight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="insight-content">
+            <h4>Performance Highlight</h4>
+            <p>Your top-performing TPA has a <strong>15% higher closing ratio</strong> than the portfolio average.
+              Consider their best practices for knowledge sharing across providers.</p>
+          </div>
+        </div>
+
+        <!-- TPA Detail Table -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3>TPA Performance Summary</h3>
+            <button id="exportTable" class="btn-secondary-small">Export CSV</button>
+          </div>
+          <div class="table-container">
+            <table id="tpaPerformanceTable" class="data-table">
+              <thead>
+                <tr>
+                  <th>TPA Provider</th>
+                  <th>System</th>
+                  <th>Claim Volume</th>
+                  <th>Closing Ratio</th>
+                  <th>Avg Days to Close</th>
+                  <th>Reserve Accuracy</th>
+                  <th>Litigation Rate</th>
+                  <th>Data Quality</th>
+                </tr>
+              </thead>
+              <tbody id="tpaPerformanceBody">
+                <!-- Populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- PAGE 3: Strategic Initiatives -->
+    <div class="dashboard-page" data-page="initiatives">
+
+      <!-- Storytelling Narrative -->
+      <div class="page-narrative">
+        <h2>Are your investments paying off?</h2>
+        <p class="narrative-intro">"Every initiative is an investment. Here's the return you're seeing."</p>
+        <p class="narrative-context">Track ROI on your cost containment programs, from nurse case management to bill
+          review. See which initiatives are exceeding targets and which need acceleration.</p>
+      </div>
+
+      <section class="dashboard-section" id="strategicInitiatives">
+        <div class="section-header">
+          <h2>Strategic Initiatives & Benefit Realization</h2>
+          <p class="section-description">ROI tracking for cost containment programs</p>
+        </div>
+
+        <div class="initiatives-grid" id="initiativesGrid">
+          <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Key Insight Callout -->
+        <div class="insight-callout">
+          <div class="insight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+            </svg>
+          </div>
+          <div class="insight-content">
+            <h4>ROI Update</h4>
+            <p>Your initiatives have generated <strong>$2.4M in savings this year</strong>, representing a 3.2x return
+              on program investment. Nurse case management continues to deliver the highest ROI.</p>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Cumulative Savings by Initiative</h3>
+              <p class="chart-description">Target vs. actual performance</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="savingsChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Initiative Utilization Trends</h3>
+              <p class="chart-description">Adoption rates over time</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="utilizationChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- PAGE 4: Data Governance -->
+    <div class="dashboard-page" data-page="governance">
+
+      <!-- Storytelling Narrative -->
+      <div class="page-narrative">
+        <h2>Can you trust your data?</h2>
+        <p class="narrative-intro">"Good decisions require good data. Here's the health of your data pipeline."</p>
+        <p class="narrative-context">Monitor data integrity across your Claims Mart: orphaned transactions, data
+          freshness, and reconciliation accuracy. These metrics ensure your analytics are built on a solid foundation.
+        </p>
+      </div>
+
+      <section class="dashboard-section" id="dataGovernance">
+        <div class="section-header">
+          <h2>Data Governance & Quality</h2>
+          <p class="section-description">Claims Mart data integrity monitoring</p>
+        </div>
+
+        <div class="governance-metrics-grid">
+          <div class="metric-card">
+            <h4>Orphaned Transactions</h4>
+            <div class="metric-value" id="govOrphanedRate">--</div>
+            <div class="metric-trend" id="govOrphanedTrend">--</div>
+            <div class="mini-chart-container">
+              <canvas id="orphanedTrendChart"></canvas>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <h4>Data Lag (Avg Days)</h4>
+            <div class="metric-value" id="govDataLag">--</div>
+            <div class="metric-trend" id="govDataLagTrend">--</div>
+            <div class="mini-chart-container">
+              <canvas id="dataLagTrendChart"></canvas>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <h4>Reconciliation Variance</h4>
+            <div class="metric-value" id="govReconcVar">--</div>
+            <div class="metric-trend" id="govReconcTrend">--</div>
+            <div class="mini-chart-container">
+              <canvas id="reconcVarTrendChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Insight Callout -->
+        <div class="insight-callout">
+          <div class="insight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <div class="insight-content">
+            <h4>Data Quality Status</h4>
+            <p>Your data quality score has improved by <strong>8% over the last quarter</strong>. One TPA still has
+              elevated orphaned transaction rates—see the heatmap below for details.</p>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Data Quality Heatmap by TPA</h3>
+            <p class="chart-description">Monthly quality scores (higher is better)</p>
+          </div>
+          <div class="heatmap-container" id="qualityHeatmap">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p>
+        <strong>Portfolio Demonstration</strong> | TPA Operations Sr. Performance Analyst |
+        Created by William Namayi for Zurich Insurance
+      </p>
+      <p class="footer-disclaimer">
+        This dashboard demonstrates data governance, performance analytics, and benefit realization tracking
+        capabilities.
+        All data is synthetically generated for demonstration purposes.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data-generator.js"></script>
+  <script src="charts.js"></script>
+  <script src="dashboard.js"></script>
+
+</body>
+
+</html>
